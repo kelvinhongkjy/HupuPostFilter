@@ -1,0 +1,9 @@
+Package: com.kh.hupupostfilter
+Name: HupuPostFilter
+Depends: mobilesubstrate
+Version: 0.0.1
+Architecture: iphoneos-arm
+Description: An awesome MobileSubstrate tweak!
+Maintainer: Kelvin Hong
+Author: Kelvin Hong
+Section: Tweaks

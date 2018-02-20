@@ -1,0 +1,9 @@
+Package: com.kh.hupupostfilter
+Name: HupuPostFilter
+Depends: mobilesubstrate
+Version: 0.0.1
+Architecture: iphoneos-arm
+Description: Remove ads, trash posts, and many more with customizable regex matching. Compatible with Hupu 7.1.16.
+Maintainer: Kelvin Hong
+Author: Kelvin Hong
+Section: Tweaks
