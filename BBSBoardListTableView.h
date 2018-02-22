@@ -4,59 +4,9 @@
 //     class-dump is Copyright (C) 1997-1998, 2000-2001, 2004-2013 by Steve Nygard.
 //
 
-// #import "UIView.h"
-
-// #import "HPADDelegate.h"
-// #import "HPGPostListTVCDelegate.h"
-// #import "UIAlertViewDelegate.h"
-// #import "UITableViewDataSource.h"
-// #import "UITableViewDelegate.h"
-
 @class ASIHTTPRequest, BBSBoardListHeadView, BBSCategoryListItem, HPTipsView, NSArray, NSMutableArray, NSMutableDictionary, NSString, UIActivityIndicatorView, UIButton, UIRefreshControl, UIScrollView, UITableView;
 
 @interface BBSBoardListTableView : UIView <UITableViewDelegate, UITableViewDataSource, UIAlertViewDelegate>
-// {
-//     NSMutableArray *adDataArray;
-//     _Bool _hasEssence;
-//     _Bool _hasNextPage_reply;
-//     _Bool _hasNextPage_post;
-//     _Bool _hasNextPage_essence;
-//     _Bool _isRequest;
-//     int _currentRequestIndex;
-//     int _newreplyRequestPage;
-//     int _newpostRequestPage;
-//     int _essenceRequestPage;
-//     CDUnknownBlockType _alphaBlock;
-//     NSArray *_tabsArray;
-//     BBSCategoryListItem *_item;
-//     NSString *_fid;
-//     NSString *_password;
-//     NSString *_categoryName;
-//     UIScrollView *_scrollView;
-//     BBSBoardListHeadView *_tableHeadView;
-//     UIView *_tableHeadTool;
-//     UIView *_toolLine;
-//     UITableView *_newreplyTableView;
-//     UITableView *_newpostTableView;
-//     UITableView *_essenceTableView;
-//     UIRefreshControl *_newreplyrefreshControl;
-//     UIRefreshControl *_newpostrefreshControl;
-//     UIRefreshControl *_essencerefreshControl;
-//     NSMutableArray *_newreplydataArray;
-//     NSMutableArray *_newpostdataArray;
-//     NSMutableArray *_essencedataArray;
-//     NSMutableDictionary *_newereplydiffDictionary;
-//     NSMutableDictionary *_newpostdiffDictionary;
-//     NSMutableDictionary *_essencediffDictionary;
-//     UIActivityIndicatorView *_activityView;
-//     ASIHTTPRequest *_dataRequest;
-//     long long _newreplyStamp;
-//     long long _newpostStamp;
-//     long long _essenceStamp;
-//     ASIHTTPRequest *_followRequest;
-//     HPTipsView *_followTipsView;
-//     UIButton *_btnFollow;
-// }
 
 - (void)HPADClickAd:(id)arg1 url:(id)arg2;
 - (void)HPADDidFailToReceiveAd:(id)arg1 didFailWithError:(id)arg2;
@@ -65,7 +15,6 @@
 @property(retain, nonatomic) UIActivityIndicatorView *activityView; // @synthesize activityView=_activityView;
 - (void)addADInfoForCell:(id)arg1 indexPath:(id)arg2 item:(id)arg3;
 - (void)alertView:(id)arg1 clickedButtonAtIndex:(long long)arg2;
-// @property(copy, nonatomic) CDUnknownBlockType alphaBlock; // @synthesize alphaBlock=_alphaBlock;
 @property(retain, nonatomic) UIButton *btnFollow; // @synthesize btnFollow=_btnFollow;
 @property(copy, nonatomic) NSString *categoryName; // @synthesize categoryName=_categoryName;
 @property(nonatomic) int currentRequestIndex; // @synthesize currentRequestIndex=_currentRequestIndex;
@@ -147,6 +96,9 @@
 - (void)updateFollowBtn;
 - (void)updateRedLinePoint:(double)arg1;
 - (void)updatemForumsArray:(id)arg1;
+
+// new methods added in Tweak.xm.
+- (NSArray *)dataArrayForTableView:(UITableView *)tableView;
 
 @end
 

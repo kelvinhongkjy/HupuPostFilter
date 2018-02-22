@@ -6,7 +6,7 @@ TARGET = iphone:latest:8.0
 include $(THEOS)/makefiles/common.mk
 
 TWEAK_NAME = HupuPostFilter
-HupuPostFilter_FILES = Tweak.xm
+HupuPostFilter_FILES = FilterUtils.m Tweak.xm
 
 include $(THEOS_MAKE_PATH)/tweak.mk
 

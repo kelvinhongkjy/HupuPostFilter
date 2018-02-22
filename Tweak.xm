@@ -1,117 +1,100 @@
 #include "BBSBoardListTableView.h"
+#include "FilterUtils.h"
+#include "HPGRecommendPostListTVC.h"
 
-NSRegularExpression * fromPattern(NSString *pattern) {
-    NSError *error = nil;
-    NSRegularExpression *regex = [NSRegularExpression regularExpressionWithPattern:pattern 
-        options:NSRegularExpressionCaseInsensitive error:&error];
-    if (!error) {
-        return regex;
+void applyStylesToMatchedCell(UITableViewCell *cell) {
+    cell.clipsToBounds = YES;
+    if ([FilterUtils debugModeEnabled]) {
+        cell.contentView.backgroundColor = [UIColor yellowColor];
     } else {
-        return nil;
+        cell.hidden = YES;
     }
 }
 
-BOOL matchTitle(NSDictionary *item, NSRegularExpression *regex) {
-    NSString *title = item[@"title"];
-    if ([title length] == 0) {
-        return NO;
-    }
-    NSRange range = NSMakeRange(0, title.length);
-    NSUInteger numMatches = [regex numberOfMatchesInString:title options:0 range:range];
-    return numMatches > 0;
-}
-
-BOOL isAd(NSDictionary *item) {
-    if (item[@"is_recommend"] != nil) {
-    	return YES;
-    } else if (item[@"badge"]) {
-    	NSArray *badges = item[@"badge"];
-    	for (NSDictionary *badge in badges) {
-    		if ([badge[@"name"] isEqual:@"广告"]) {
-    			return YES;
-    		}
-    	}
-    }
-    return NO;
-}
-
-BOOL shouldRemoveTopic(NSDictionary *item) {
-    NSUserDefaults *userDefaults = [NSUserDefaults standardUserDefaults];
-    NSString *pattern = nil;
-
-    pattern = [userDefaults stringForKey:@"title"];
-    if ([pattern length]) {
-        NSRegularExpression *regex = fromPattern(pattern);
-        if (regex && matchTitle(item, regex)) {
-            return YES;
-        }
-    }
-
-    if ([userDefaults boolForKey:@"adsFilter"]) {
-    	if (isAd(item)) {
-    		return YES;
-    	}
-    }
-    return NO;
-}
-
-BOOL enableDebugRegex() {
-    return [[NSUserDefaults standardUserDefaults] boolForKey:@"debug"];
-}
-
-BOOL enableFilters() {
-    return [[NSUserDefaults standardUserDefaults] boolForKey:@"enabled"];
+void resetCellStyles(UITableViewCell *cell) {
+    cell.contentView.backgroundColor = [UIColor whiteColor];
+    cell.hidden = NO;
 }
 
 %hook BBSBoardListTableView
 
+%new 
+- (NSArray *)dataArrayForTableView:(UITableView *)tableView {
+    if (tableView == self.newreplyTableView) {
+        return self.newreplydataArray;
+    } else if (tableView == self.newpostTableView) {
+        return self.newpostdataArray;
+    } else if (tableView == self.newreplyTableView) {
+        return self.newreplydataArray;
+    }
+    return nil;
+}
+
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
     UITableViewCell *cell = %orig;
-    if (cell) {
-        cell.contentView.backgroundColor = [UIColor whiteColor];
-        cell.hidden = NO;
+    if (!cell) {
+        return cell;
+    }
 
-        NSArray *itemsArray = nil;
-        if (tableView == self.newreplyTableView) {
-            itemsArray = self.newreplydataArray;
-        } else if (tableView == self.newpostTableView) {
-            itemsArray = self.newpostdataArray;
-        }
+    resetCellStyles(cell);
 
-        if (itemsArray.count <= indexPath.row) {
-            return cell;
-        }
+    NSArray *itemsArray = [self dataArrayForTableView:tableView];
+    if (itemsArray.count <= indexPath.row) {
+        return cell;
+    }
 
-        NSDictionary *item = itemsArray[indexPath.row];
-        if (item && enableFilters() && shouldRemoveTopic(item)) {
-            cell.clipsToBounds = YES;
-            if (enableDebugRegex()) {
-                cell.contentView.backgroundColor = [UIColor yellowColor];
-            } else {
-                cell.hidden = YES;
-            }
-        }
+    NSDictionary *item = itemsArray[indexPath.row];
+    if (item && [FilterUtils filtersEnabled] && [FilterUtils shouldRemoveItem:item]) {
+        applyStylesToMatchedCell(cell);
     }
     return cell;
 }
 
 - (double)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath {
-    NSArray *itemsArray = nil;
-    if (tableView == self.newreplyTableView) {
-        itemsArray = self.newreplydataArray;
-    } else if (tableView == self.newpostTableView) {
-        itemsArray = self.newpostdataArray;
-    }
-
+    NSArray *itemsArray = [self dataArrayForTableView:tableView];
     if (itemsArray.count <= indexPath.row) {
         return %orig;
     }
 
     NSDictionary *item = itemsArray[indexPath.row];
-    if (enableFilters() && !enableDebugRegex() && shouldRemoveTopic(item)) {
+    if (item && [FilterUtils filtersEnabled] && ![FilterUtils debugModeEnabled] && [FilterUtils shouldRemoveItem:item]) {
         return 0;
     }
+    return %orig;
+}
 
+%end
+
+%hook HPGRecommendPostListTVC
+
+- (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
+    UITableViewCell *cell = %orig;
+    if (!cell) {
+        return cell;
+    }
+
+    resetCellStyles(cell);
+
+    if (self.mForumsArray.count <= indexPath.row) {
+        return cell;
+    }
+
+    NSDictionary *item = self.mForumsArray[indexPath.row];
+    if (item && [FilterUtils filtersEnabled] && [FilterUtils shouldRemoveItem:item]) {
+        applyStylesToMatchedCell(cell);
+    }
+    return cell;
+}
+
+- (double)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath {
+    if (self.mForumsArray.count <= indexPath.row) {
+        return %orig;
+    }
+
+    NSDictionary *item = self.mForumsArray[indexPath.row];
+    if (item && [FilterUtils filtersEnabled] && ![FilterUtils debugModeEnabled] && [FilterUtils shouldRemoveItem:item]) {
+        return 0;
+    }
     return %orig;
 }
 
