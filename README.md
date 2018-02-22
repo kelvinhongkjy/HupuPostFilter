@@ -6,6 +6,8 @@ A tweak that removes ads, trash posts, and many more with customizable regex mat
 Create your own filter with regex and even unicode characters! Matches are highlighted when debug mode is on.
 When it's off, matches are removed.
 
+The demo below shows how you can use regex to remove posts whose title contains lower case letters (`[a-z]`).
+
 ![Regex mode demo][regex_mode_demo]
 
 [debug_mode_demo]: https://github.com/kelvinhongkjy/HupuPostFilter/raw/master/screenshots/debug_mode.gif "debug mode demo"
