@@ -70,14 +70,19 @@ BOOL enableFilters() {
     if (cell) {
         cell.contentView.backgroundColor = [UIColor whiteColor];
         cell.hidden = NO;
-        NSDictionary *item = nil;
+
+        NSArray *itemsArray = nil;
         if (tableView == self.newreplyTableView) {
-            item = self.newreplydataArray[indexPath.row];
+            itemsArray = self.newreplydataArray;
         } else if (tableView == self.newpostTableView) {
-            item = self.newpostdataArray[indexPath.row];
+            itemsArray = self.newpostdataArray;
         }
 
+        if (itemsArray.count <= indexPath.row) {
+            return cell;
+        }
 
+        NSDictionary *item = itemsArray[indexPath.row];
         if (item && enableFilters() && shouldRemoveTopic(item)) {
             cell.clipsToBounds = YES;
             if (enableDebugRegex()) {
@@ -91,16 +96,22 @@ BOOL enableFilters() {
 }
 
 - (double)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath {
-    NSDictionary *item = nil;
+    NSArray *itemsArray = nil;
     if (tableView == self.newreplyTableView) {
-        item = self.newreplydataArray[indexPath.row];
+        itemsArray = self.newreplydataArray;
     } else if (tableView == self.newpostTableView) {
-        item = self.newpostdataArray[indexPath.row];
+        itemsArray = self.newpostdataArray;
     }
 
+    if (itemsArray.count <= indexPath.row) {
+        return %orig;
+    }
+
+    NSDictionary *item = itemsArray[indexPath.row];
     if (enableFilters() && !enableDebugRegex() && shouldRemoveTopic(item)) {
         return 0;
     }
+
     return %orig;
 }
 
